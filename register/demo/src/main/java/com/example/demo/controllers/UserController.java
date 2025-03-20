@@ -18,12 +18,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.models.User;
 import com.example.demo.services.UserService;
+
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 @RestController
 @RequestMapping("/register")
+@CrossOrigin(origins = "*")
 public class UserController {
     
     @Autowired
@@ -113,4 +116,20 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PostMapping("/balance/{id}")
+    public ResponseEntity<String> updateUsersBalance(@PathVariable Integer id, @RequestBody Double new_balance) {
+        Double balance = userService.updateUsersBalance(id, new_balance);
+        if (balance == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(balance.toString(), HttpStatus.OK);
+    }
+
+    @GetMapping("/balance/{user_id}")
+    public Double getBalance(@PathVariable Integer user_id) {
+        System.out.println("123 : "+user_id);
+        return userService.getUserById(user_id).get().getBalance();
+    }
+    
 }

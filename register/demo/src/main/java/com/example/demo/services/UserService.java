@@ -30,7 +30,7 @@ public class UserService {
     @Value("${portfolio.service.url}")
     private String portfolioBaseUrl;
 
-    @Value("${stockExhange.service.url}")
+    @Value("${stock.service.url}")
     private String stockExchangeBaseUrl;
 
     @Value("${trading.service.url}")
@@ -124,4 +124,26 @@ public class UserService {
             return null;
         }
     }
+
+    public Double updateUsersBalance(Integer userId, Double new_balance) {
+        try {
+            Optional<User> userOpt = repo.findById(userId);
+            
+            if (userOpt.isEmpty()) {
+                System.out.println("User not found with id: " + userId);
+                return null;
+            }
+            
+            User user = userOpt.get();
+            user.setBalance(new_balance);
+            User updatedUser = repo.save(user);
+            
+            return updatedUser.getBalance();
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid user id format: " + userId);
+            return null;
+        }
+    }
+
+    
 }
