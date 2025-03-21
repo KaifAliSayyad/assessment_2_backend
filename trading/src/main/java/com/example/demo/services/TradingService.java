@@ -1,7 +1,9 @@
 package com.example.demo.services;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -161,37 +163,65 @@ public class TradingService {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Stock not found");
             }
 
-
+            System.out.println(getUserHoldingsUrl+ " getUserHoldingsUrl");
             // 2. Check user's holdings
-            UserStock userHoldings = restTemplate.getForObject(
+            // List<UserStock> userHoldings = restTemplate.getForObject(
+            //     getUserHoldingsUrl,
+            //     List.class
+            // );
+
+            UserStock[] userHoldings = restTemplate.getForObject(
                 getUserHoldingsUrl,
-                UserStock.class
+                UserStock[].class
             );
+            
+            System.out.println("UserHoldings  "+userHoldings[0].getStock());
+            // System.out.println(userHoldings.size());
+            // for(int i = 0; i < userHoldings.size(); i++){
+            //     userHoldings.get(0).getClass();
+            // }
+            // for(UserStock obj : userHoldings){
+            //     System.out.println(obj.getStock().getId() + "obj.getStock().getId()");
+            //     System.out.println(obj.getAverageBuyPrice() + "obj.getAverageBuyPrice()");
+            //     System.out.println(obj.getStock().getCurrentPrice() + "obj.getStock().getCurrentPrice()");
+            //     System.out.println(obj.getStock().getQuantity() + "obj.getStock().getQuantity()");
+            //     System.out.println(obj.getStock().getName() + "obj.getStock().getStockName()");
+            //     System.out.println(obj.getPurchasedQuantity() + "obj.getPurchasedQuantity()");
+            // }
+            // UserStock userStock = userHoldings.stream().filter((UserStock obj) -> obj.getStock().getId() == sellRequest.getStockId()).collect(Collectors.toList()).get(0);
+            // System.out.println(userStock + "userStock");
+            System.out.println(sellRequest.getQuantity() + "sellRequest.getQuantity()");
+            // System.out.println(userHoldings.get(0).getPurchasedQuantity() + "userHoldings.get(0).getPurchasedQuantity()");
+            System.out.println(stock.getCurrentPrice() + "stock.getCurrentPrice()");
 
-            System.out.println("UserHoldings  "+userHoldings);
-
-            if (userHoldings == null || userHoldings.getPurchasedQuantity() < sellRequest.getQuantity()) {
+            if (userHoldings.length == 0 || userHoldings[0].getPurchasedQuantity() < sellRequest.getQuantity()) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, 
                     "Insufficient stock holdings");
             }
 
+            System.out.println("Came here");
+
+
             // 3. Calculate sell value
             double sellValue = sellRequest.getQuantity() * stock.getCurrentPrice();
+
+
 
             System.out.println("SellValue  "+sellValue);
 
             // 4. Update user's holdings
-            int remainingQuantity = userHoldings.getPurchasedQuantity() - sellRequest.getQuantity();
+            int remainingQuantity = userHoldings[0].getPurchasedQuantity() - sellRequest.getQuantity();
             System.out.println("remainingQuantity  "+remainingQuantity);
             if (remainingQuantity == 0) {
                 // Delete the holding if no stocks remain
                 restTemplate.delete(updateHoldingsUrl + "/" + sellRequest.getStockId());
             } else {
                 // Update the holding with new quantity
-                userHoldings.setPurchasedQuantity(remainingQuantity);
-                restTemplate.put(
+                userHoldings[0].setPurchasedQuantity(remainingQuantity);
+                restTemplate.postForObject(
                     updateHoldingsUrl,
-                    userHoldings
+                    userHoldings[0],
+                    Void.class
                 );
             }
 
@@ -226,8 +256,11 @@ public class TradingService {
             );
 
         } catch (HttpClientErrorException e) {
+            e.printStackTrace();
+            System.out.println("HttpClientErrorException");
             throw new ResponseStatusException(e.getStatusCode(), e.getMessage());
         } catch (Exception e) {
+            e.printStackTrace();
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, 
                 "An error occurred while processing the sale: " + e.getMessage());
         }

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Stock {
     private Long id;
     private String name;
-    private Integer quantity;
+    private int quantity;
     
     private Double minPrice;
     

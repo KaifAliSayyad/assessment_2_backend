@@ -57,14 +57,14 @@ public class PortfolioController {
 
     @GetMapping("/{userId}/holdings")
     public ResponseEntity<List<UserStock>> getHoldings(@PathVariable Integer userId) {
-        System.out.println(userId);
+        System.out.println("userId :" +userId);
         Portfolio portfolio = portfolioService.getPortfolioByUserId(userId);
+        System.out.println("portfolio: " + portfolio);
         return ResponseEntity.ok(portfolio.getHoldings());
     }
 
     @DeleteMapping("/{userId}/holdings/{stockId}")
     public ResponseEntity<Portfolio> removeFromHoldings(@PathVariable Integer userId, @PathVariable Long stockId) {
-        System.out.println("here...");
         return ResponseEntity.ok(portfolioService.removeFromHoldings(userId, stockId));
     }
 

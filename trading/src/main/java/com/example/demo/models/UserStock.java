@@ -1,6 +1,8 @@
 package com.example.demo.models;
 
+
 public class UserStock {
+    private Long id;
     private Stock stock;
     private Integer averageBuyPrice;
     private Integer purchasedQuantity;
@@ -28,5 +30,13 @@ public class UserStock {
 
     public void setPurchasedQuantity(Integer purchasedQuantity) {
         this.purchasedQuantity = purchasedQuantity;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }
