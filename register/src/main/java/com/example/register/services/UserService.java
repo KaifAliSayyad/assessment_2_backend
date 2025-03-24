@@ -112,8 +112,8 @@ public class UserService {
         }
     }
 
-    public User forgotPassword(Integer id, LocalDate dob, String new_password){
-        User user = repo.findById(id).get();
+    public User forgotPassword(String username, LocalDate dob, String new_password){
+        User user = repo.findByUsername(username).get();
         if(user.getDob().equals(dob)){
             user.setPassword(new_password);
             System.out.println("password changed for user "+user.getUsername());

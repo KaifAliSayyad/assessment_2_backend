@@ -105,9 +105,9 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @PutMapping("/forgotPassword/{id}")
+    @PutMapping("/forgotPassword/{username}")
     public ResponseEntity<User> forgotPassword(
-            @PathVariable Integer id,
+            @PathVariable String username,
             @RequestBody Map<String, String> request) {
         try {
             // Parse date from "dd-MM-yyyy" format
@@ -115,7 +115,7 @@ public class UserController {
             LocalDate dob = LocalDate.parse(request.get("dob"), formatter);
             String newPassword = request.get("new_password");
             
-            User user = userService.forgotPassword(id, dob, newPassword);
+            User user = userService.forgotPassword(username, dob, newPassword);
             if (user == null) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
