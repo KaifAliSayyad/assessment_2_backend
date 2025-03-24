@@ -11,12 +11,11 @@ import com.example.demo.models.Portfolio;
 import com.example.demo.models.Stocks;
 import com.example.demo.service.PortfolioService;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 
 @RestController
-@RequestMapping("/portfolio")
+// @RequestMapping("/portfolio")
 @CrossOrigin(origins = "*")
 public class PortfolioController {
 

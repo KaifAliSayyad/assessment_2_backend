@@ -19,7 +19,7 @@ import com.example.demo.models.Stock;
 import com.example.demo.service.StockService;
 
 @RestController
-@RequestMapping("/stocks")
+// @RequestMapping("/stocks")
 @CrossOrigin(origins= "*")
 public class StockController {
 
