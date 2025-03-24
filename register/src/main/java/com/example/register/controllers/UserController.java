@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 // @RequestMapping("/register")
-@CrossOrigin(origins= "*")
+// @CrossOrigin(origins= "http://localhost:3000")
 public class UserController {
     
     @Autowired
@@ -53,8 +53,16 @@ public class UserController {
             user.setPassword(request.get("password"));
             
             // Parse date from "dd-MM-yyyy" format
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-            LocalDate dob = LocalDate.parse(request.get("dob"), formatter);
+            DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+            DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate dob = null;
+            try{
+                dob = LocalDate.parse(request.get("dob"), formatter1);
+                dob = LocalDate.parse(request.get("dob"), formatter2);
+            }catch(Exception e){
+                System.out.println("Error parsing birth date");
+                e.printStackTrace();
+            }
             user.setDob(dob);
             
             // Parse balance from string to double

@@ -17,32 +17,31 @@ public class GatewayApplication {
 	// return builder.routes()
 	// // Exchange Service Routes - GET, POST only
 	// .route(r -> r
-	// .path("/exchange/**")
+	// .path("/stocks/**")
 	// .and()
-	// .method(HttpMethod.GET, HttpMethod.POST)
-	// .uri("http://localhost:8080"))
+	// .method("GET", "POST", "PUT", "DELETE", "OPTIONS")
+	// .uri("http://localhost:8083"))
 
 	// // Portfolio Service Routes - GET only
 	// .route(r -> r
 	// .path("/portfolio/**")
 	// .and()
-	// .method(HttpMethod.GET)
+	// .method("GET", "POST", "PUT", "DELETE", "OPTIONS")
 	// .uri("http://localhost:8081"))
 
 	// // Registration Service Routes - POST only
-	// .route(r -> r
-	// .path("/registration/**")
+	// .route("REGISTER",r -> r
+	// .path("/register/**")
 	// .and()
-	// .method(HttpMethod.POST)
-	// .uri("http://localhost:8082"))
+	// .method("GET", "POST", "PUT", "DELETE", "OPTIONS")
+	// .uri("http://localhost:8080"))
 
 	// // Trading Service Routes - All methods
 	// .route(r -> r
 	// .path("/trading/**")
 	// .and()
-	// .method(HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT,
-	// HttpMethod.DELETE)
-	// .uri("http://localhost:8083"))
+	// .method("GET", "POST", "PUT", "DELETE", "OPTIONS")
+	// .uri("http://localhost:8082"))
 	// .build();
 	// }
 }
