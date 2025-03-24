@@ -20,7 +20,7 @@ import com.example.demo.service.StockService;
 
 @RestController
 // @RequestMapping("/stocks")
-@CrossOrigin(origins= "*")
+// @CrossOrigin(origins= "*")
 public class StockController {
 
     @Autowired

@@ -13,7 +13,7 @@ import com.example.trading.models.BuyRequest;
 import com.example.trading.services.TradingService;
 
 @RestController
-@CrossOrigin(origins = "*")
+// @CrossOrigin(origins = "*")
 public class TradingController {
     
     @Autowired

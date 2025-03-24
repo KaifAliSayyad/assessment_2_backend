@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 // @RequestMapping("/portfolio")
-@CrossOrigin(origins = "*")
+// @CrossOrigin(origins = "*")
 public class PortfolioController {
 
     @Autowired
