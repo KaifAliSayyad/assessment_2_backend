@@ -61,12 +61,12 @@ public class PortfolioService {
         if (existingHolding != null) {
             // Update existing holding
             System.out.println("Existing holding found "+existingHolding);
-            int totalQuantity = newHolding.getPurchasedQuantity();
+            int totalQuantity = existingHolding.getPurchasedQuantity() + newHolding.getPurchasedQuantity();
             double totalCost = (existingHolding.getAverageBuyPrice() * existingHolding.getPurchasedQuantity()) +
                              (newHolding.getAverageBuyPrice() * newHolding.getPurchasedQuantity());
             
             existingHolding.setPurchasedQuantity(totalQuantity);
-            existingHolding.setAverageBuyPrice((int) (totalCost / totalQuantity));
+            existingHolding.setAverageBuyPrice((totalCost / Double.valueOf(totalQuantity)));
         } else {
             // Add new holding
             portfolio.getHoldings().add(newHolding);

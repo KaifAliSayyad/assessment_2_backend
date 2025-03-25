@@ -13,13 +13,13 @@ public class UserStock {
     @JoinColumn(name = "stock_id", nullable = false)
     private Stocks stock; // Reference to stock
 
-    private Integer averageBuyPrice; // For profit/loss calculation
+    private Double averageBuyPrice; // For profit/loss calculation
 
     private Integer purchasedQuantity;
 
     public UserStock() {}
 
-    public UserStock(Stocks stock, Integer averageBuyPrice) {
+    public UserStock(Stocks stock, Double averageBuyPrice) {
         this.stock = stock;
         this.averageBuyPrice = averageBuyPrice;
     }
@@ -40,11 +40,12 @@ public class UserStock {
         this.stock = stock;
     }
 
-    public Integer getAverageBuyPrice() {
+    
+    public Double getAverageBuyPrice() {
         return averageBuyPrice;
     }
 
-    public void setAverageBuyPrice(Integer averageBuyPrice) {
+    public void setAverageBuyPrice(Double averageBuyPrice) {
         this.averageBuyPrice = averageBuyPrice;
     }
 

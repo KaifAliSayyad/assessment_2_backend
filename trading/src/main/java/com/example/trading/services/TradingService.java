@@ -89,7 +89,7 @@ public class TradingService {
             // 5. Create UserStock object for portfolio
             UserStock userStock = new UserStock();
             userStock.setStock(stock);
-            userStock.setAverageBuyPrice(stock.getCurrentPrice().intValue());
+            userStock.setAverageBuyPrice(stock.getCurrentPrice());
             userStock.setPurchasedQuantity(buyRequest.getQuantity());
             String portfolioUrl = portfolioServiceUrl + "/" + user_id + "/holdings";
             System.out.println(portfolioUrl);

@@ -4,7 +4,7 @@ package com.example.trading.models;
 public class UserStock {
     private Long id;
     private Stock stock;
-    private Integer averageBuyPrice;
+    private Double averageBuyPrice;
     private Integer purchasedQuantity;
 
     // Getters and Setters
@@ -16,11 +16,11 @@ public class UserStock {
         this.stock = stock;
     }
 
-    public Integer getAverageBuyPrice() {
+    public Double getAverageBuyPrice() {
         return averageBuyPrice;
     }
 
-    public void setAverageBuyPrice(Integer averageBuyPrice) {
+    public void setAverageBuyPrice(Double averageBuyPrice) {
         this.averageBuyPrice = averageBuyPrice;
     }
 
