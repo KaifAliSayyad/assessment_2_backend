@@ -34,7 +34,7 @@ public class StockController {
     public void updateStockPrices() {
         List<Stock> stocks = stockService.stockRepository.findAll();
         for (Stock stock : stocks) {
-            stock.setCurrentPrice(stockService.generateRandomPrice(stock.getMinPrice(), stock.getMaxPrice()));
+            stock.setCurrentPrice(stockService.generateRandomPrice(stock.getMinPrice(), stock.getMaxPrice(), stock.getCurrentPrice()));
             stockService.stockRepository.save(stock);
         }
         System.out.println("*****************Stock prices updated*****************");

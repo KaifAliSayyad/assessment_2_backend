@@ -53,8 +53,14 @@ public class StockService {
         return stock.isPresent() && stock.get().getQuantity() >= quantity;
     }
 
-    public Double generateRandomPrice(Double min, Double max) {
-        double newPrice = min.doubleValue() + (max.doubleValue() - min.doubleValue()) * random.nextDouble();
+    public Double generateRandomPrice(Double min, Double max, Double currentPrice) {
+        double changePercentage = (random.nextDouble() - 0.5) * 0.02; // Generate a change between -1% to 1%
+        double change = currentPrice * changePercentage;
+        double newPrice = currentPrice + change;
+        
+        // Ensure the new price is within the min and max bounds
+        newPrice = Math.max(min, Math.min(max, newPrice));
+        
         return newPrice;
     }
 }
