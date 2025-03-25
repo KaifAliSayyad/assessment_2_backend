@@ -6,6 +6,7 @@ import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.models.Stock;
@@ -15,7 +16,7 @@ import com.example.demo.repository.StockRepository;
 public class StockService {
 
     @Autowired
-    private StockRepository stockRepository;
+    public StockRepository stockRepository;
 
     private final Random random = new Random();
 
@@ -52,17 +53,7 @@ public class StockService {
         return stock.isPresent() && stock.get().getQuantity() >= quantity;
     }
 
-    // Auto-update stock price every second
-    @Scheduled(fixedRate = 1000)
-    public void updateStockPrices() {
-        List<Stock> stocks = stockRepository.findAll();
-        for (Stock stock : stocks) {
-            stock.setCurrentPrice(generateRandomPrice(stock.getMinPrice(), stock.getMaxPrice()));
-            stockRepository.save(stock);
-        }
-    }
-
-    private Double generateRandomPrice(Double min, Double max) {
+    public Double generateRandomPrice(Double min, Double max) {
         double newPrice = min.doubleValue() + (max.doubleValue() - min.doubleValue()) * random.nextDouble();
         return newPrice;
     }

@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +27,18 @@ public class StockController {
 
     @Autowired
     private StockService stockService;
+
+    // Auto-update stock price every second
+    @Scheduled(cron = "*/1 * * * * *")
+    @Async
+    public void updateStockPrices() {
+        List<Stock> stocks = stockService.stockRepository.findAll();
+        for (Stock stock : stocks) {
+            stock.setCurrentPrice(stockService.generateRandomPrice(stock.getMinPrice(), stock.getMaxPrice()));
+            stockService.stockRepository.save(stock);
+        }
+        System.out.println("*****************Stock prices updated*****************");
+    }
 
     @PostMapping
     public ResponseEntity<Stock> addStock(@RequestBody Stock stock) {
