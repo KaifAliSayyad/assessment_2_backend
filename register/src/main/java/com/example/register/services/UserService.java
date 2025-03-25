@@ -64,18 +64,22 @@ public class UserService {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("user", new_user);
-        requestBody.put("balance", new_user.getBalance());
+        requestBody.put("userId", new_user.getId());
 
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
-
-        String response = restTemplate.postForObject(
-            portfolioBaseUrl + "/create", 
-            request, 
-            String.class
-        );
-        System.out.println("Portfolio creation response: " + response);
-        
+        String response = "abc";
+        String createPortfolioUrl = portfolioBaseUrl + "/create";
+        System.out.println(createPortfolioUrl);
+        try{
+            response = restTemplate.postForObject(
+                createPortfolioUrl, 
+                request, 
+                String.class
+            );
+        }catch(Exception e){
+            System.out.println("Portfolio creation response: " + e.getMessage());
+        }
+        System.out.println(response);
         return new_user;
     }
 

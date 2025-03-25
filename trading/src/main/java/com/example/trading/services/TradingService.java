@@ -1,5 +1,7 @@
 package com.example.trading.services;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -175,7 +177,6 @@ public class TradingService {
                 UserStock[].class
             );
             
-            System.out.println("UserHoldings  "+userHoldings[0].getStock());
             // System.out.println(userHoldings.size());
             // for(int i = 0; i < userHoldings.size(); i++){
             //     userHoldings.get(0).getClass();
@@ -190,11 +191,13 @@ public class TradingService {
             // }
             // UserStock userStock = userHoldings.stream().filter((UserStock obj) -> obj.getStock().getId() == sellRequest.getStockId()).collect(Collectors.toList()).get(0);
             // System.out.println(userStock + "userStock");
+            UserStock reqStock = Arrays.asList(userHoldings).stream().filter(h -> h.getStock().getId().equals(sellRequest.getStockId())).collect(Collectors.toList()).get(0);
+            System.out.println(reqStock + "reqStock");
             System.out.println(sellRequest.getQuantity() + "sellRequest.getQuantity()");
             // System.out.println(userHoldings.get(0).getPurchasedQuantity() + "userHoldings.get(0).getPurchasedQuantity()");
             System.out.println(stock.getCurrentPrice() + "stock.getCurrentPrice()");
 
-            if (userHoldings.length == 0 || userHoldings[0].getPurchasedQuantity() < sellRequest.getQuantity()) {
+            if (userHoldings.length == 0 || reqStock.getPurchasedQuantity() < sellRequest.getQuantity()) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, 
                     "Insufficient stock holdings");
             }
@@ -210,17 +213,20 @@ public class TradingService {
             System.out.println("SellValue  "+sellValue);
 
             // 4. Update user's holdings
-            int remainingQuantity = userHoldings[0].getPurchasedQuantity() - sellRequest.getQuantity();
+
+            System.out.println("purchased quantity" + reqStock.getPurchasedQuantity());
+            int remainingQuantity = reqStock.getPurchasedQuantity() - sellRequest.getQuantity();
             System.out.println("remainingQuantity  "+remainingQuantity);
             if (remainingQuantity == 0) {
                 // Delete the holding if no stocks remain
                 restTemplate.delete(updateHoldingsUrl + "/" + sellRequest.getStockId());
             } else {
                 // Update the holding with new quantity
-                userHoldings[0].setPurchasedQuantity(remainingQuantity);
+                reqStock.setPurchasedQuantity(remainingQuantity);
+                System.out.println("************************updated user holding******************: "+reqStock.toString());
                 restTemplate.postForObject(
                     updateHoldingsUrl,
-                    userHoldings[0],
+                    reqStock,
                     Void.class
                 );
             }

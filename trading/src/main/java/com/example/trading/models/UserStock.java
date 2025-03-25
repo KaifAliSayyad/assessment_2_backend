@@ -39,4 +39,8 @@ public class UserStock {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public String toString(){
+        return "id: " + id + " stock: " + stock + " averageBuyPrice: " + averageBuyPrice + " purchasedQuantity: " + purchasedQuantity;
+    }
 }
