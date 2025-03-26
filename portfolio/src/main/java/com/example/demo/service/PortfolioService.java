@@ -1,6 +1,9 @@
 package com.example.demo.service;
 
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.example.demo.models.Portfolio;
@@ -13,6 +16,10 @@ public class PortfolioService {
 
     @Autowired
     private PortfolioRepository portfolioRepository;
+
+    public List<Portfolio> getAllPortfolios() {
+        return portfolioRepository.findAll();
+    }
 
     public Portfolio createPortfolio(Portfolio portfolio) {
         return portfolioRepository.save(portfolio);
@@ -121,5 +128,34 @@ public class PortfolioService {
         portfolio.setValue(totalValue);
 
         return portfolioRepository.save(portfolio);
+    }
+
+    public Portfolio updatePortfolioValue(Integer userId) {
+        Portfolio portfolio = portfolioRepository.findByUserId(userId);
+        if (portfolio == null) {
+            throw new RuntimeException("Portfolio not found for user: " + userId);
+        }
+
+        double totalValue = portfolio.getHoldings()
+            .stream()
+            .mapToDouble(holding -> 
+                holding.getPurchasedQuantity() * holding.getStock().getCurrentPrice())
+            .sum();
+        
+        System.out.println("Total value: " + totalValue);
+        portfolio.setValue(totalValue);
+
+        return portfolioRepository.save(portfolio);
+    }
+
+    public Double getPortfolioTotalInvestment(Integer userId) {
+        Portfolio portfolio = portfolioRepository.findByUserId(userId);
+        if (portfolio == null) {
+            throw new RuntimeException("Portfolio not found for user: " + userId);
+        }
+        return portfolio.getHoldings()
+            .stream()
+            .mapToDouble(holding -> holding.getPurchasedQuantity() * holding.getAverageBuyPrice())
+            .sum();
     }
 }

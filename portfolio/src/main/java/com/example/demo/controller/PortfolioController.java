@@ -1,9 +1,11 @@
 package com.example.demo.controller;
 
+import java.net.Inet4Address;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.models.UserStock;
@@ -11,6 +13,8 @@ import com.example.demo.models.Portfolio;
 import com.example.demo.models.Stocks;
 import com.example.demo.service.PortfolioService;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 
@@ -73,6 +77,12 @@ public class PortfolioController {
         return ResponseEntity.ok(portfolio.getValue());
     }
 
+    @GetMapping("/{user_id}/investment")
+    public Double getTotalInvestment(@PathVariable Integer user_id) {
+        return portfolioService.getPortfolioTotalInvestment(user_id);
+    }
+    
+
     @GetMapping("/{userId}/{stockId}/{sellQuantity}")
     public ResponseEntity<Boolean> doesUserHasEnoughQuantity(
             @PathVariable Integer userId, 
@@ -81,5 +91,14 @@ public class PortfolioController {
         return ResponseEntity.ok(portfolioService.doesUserHasEnoughQuantity(userId, stockId, sellQuantity));
     }
     
+
+    @Scheduled(cron = "* * * * * *")
+    public void updatePortfolioValues() {
+        List<Portfolio> portfolios = portfolioService.getAllPortfolios();
+        for (Portfolio portfolio : portfolios) {
+            portfolioService.updatePortfolioValue(portfolio.getUserId());
+            System.out.println("Portfolio value updated for user: " + portfolio.getUserId());
+        }
+    }
     
 }

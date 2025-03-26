@@ -14,10 +14,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+
 import org.springframework.web.bind.annotation.RestController;
 
+
 import com.example.demo.models.Stock;
+
 import com.example.demo.service.StockService;
 
 @RestController
@@ -28,16 +30,12 @@ public class StockController {
     @Autowired
     private StockService stockService;
 
-    // Auto-update stock price every second
-    @Scheduled(cron = "*/1 * * * * *")
+
+    // Auto-update stock price every minute
+    @Scheduled(cron = "*/20 * * * * *")
     @Async
     public void updateStockPrices() {
-        List<Stock> stocks = stockService.stockRepository.findAll();
-        for (Stock stock : stocks) {
-            stock.setCurrentPrice(stockService.generateRandomPrice(stock.getMinPrice(), stock.getMaxPrice(), stock.getCurrentPrice()));
-            stockService.stockRepository.save(stock);
-        }
-        System.out.println("*****************Stock prices updated*****************");
+        stockService.updatePrices();
     }
 
     @PostMapping
@@ -75,4 +73,5 @@ public class StockController {
         stockService.deleteStock(id);
         return ResponseEntity.noContent().build();
     }
+
 }

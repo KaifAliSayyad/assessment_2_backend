@@ -23,10 +23,10 @@ public class Portfolio {
     
     private Integer userId;
     
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Stocks> watchlist = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<UserStock> holdings = new ArrayList<>();
     
 	@Nullable
