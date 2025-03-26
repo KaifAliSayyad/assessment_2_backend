@@ -254,7 +254,7 @@ public class TradingService {
             }
 
             // 6. Update stock quantity in stock service
-            int newStockQuantity = stock.getQuantity() + sellRequest.getQuantity();
+            int newStockQuantity = -1*sellRequest.getQuantity();
             stock.setQuantity(newStockQuantity);
             restTemplate.put(
                 updateStockUrl,

@@ -5,7 +5,8 @@ import java.util.concurrent.TimeUnit;
 public class ServiceStarter {
     private static final String JAVA_CMD = "java";
     private static final String JAR_OPTION = "-jar";
-    private static final int DELAY_BETWEEN_SERVICES = 15; // seconds
+    private static final int DELAY_BETWEEN_SERVICES = 0; // seconds
+    private static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
 
     public static void main(String[] args) {
         String baseDir = System.getProperty("user.dir");
@@ -34,7 +35,13 @@ public class ServiceStarter {
             
             if (jarPath == null) {
                 System.err.println("JAR file not found for service: " + serviceName);
-                return;
+                System.out.println("Building jar file for this service");
+                boolean jarCreated = createJarFile(baseDir, serviceName);
+                if(!jarCreated){
+                    return;
+                }else{
+                    jarPath = findJarFile(new File(baseDir + File.separator + serviceName + File.separator + "target"));
+                }
             }
 
             ProcessBuilder processBuilder = new ProcessBuilder(
@@ -53,7 +60,7 @@ public class ServiceStarter {
             System.out.println("Starting " + serviceName + " service...");
             Process process = processBuilder.start();
 
-            // // Add shutdown hook to terminate the process when the main program exits
+            // Add shutdown hook to terminate the process when the main program exits
             // Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             //     process.destroy();
             //     System.out.println("Terminated " + serviceName + " service");
@@ -84,6 +91,42 @@ public class ServiceStarter {
             TimeUnit.SECONDS.sleep(seconds);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
+        }
+    }
+
+    private static boolean createJarFile(String baseDir, String serviceName) {
+        try {
+            String mvnwCommand = IS_WINDOWS ? 
+                baseDir + File.separator + serviceName + File.separator + "mvnw.cmd" :
+                baseDir + File.separator + serviceName + File.separator + "mvnw";
+
+            ProcessBuilder processBuilder = new ProcessBuilder(
+                mvnwCommand,
+                "clean",
+                "package",
+                "-DskipTests"
+            );
+
+            processBuilder.directory(new File(baseDir + File.separator + serviceName));
+            
+            // Redirect error and output streams            
+            processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT);  
+            processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+            
+            System.out.println("Building jar file for " + serviceName + " service...");
+            Process process = processBuilder.start();
+            boolean completed = process.waitFor(10, TimeUnit.MINUTES);
+            
+            if (!completed) {
+                System.err.println("Build timed out for " + serviceName);
+                process.destroy();
+                return false;
+            }
+            
+            return process.exitValue() == 0;
+        } catch (IOException | InterruptedException e) {
+            System.err.println("Error building jar file for " + serviceName + " service: " + e.getMessage());
+            return false;
         }
     }
 }
