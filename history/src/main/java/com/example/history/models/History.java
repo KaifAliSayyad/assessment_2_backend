@@ -1,7 +1,7 @@
 package com.example.history.models;
 
 import java.util.Date;
-
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -9,6 +9,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 
 import org.hibernate.type.SqlTypes;
 
+import io.micrometer.common.lang.Nullable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -39,5 +40,11 @@ public class History {
     private Long stockId;
     
     @JdbcTypeCode(SqlTypes.JSON)
-    private Map<Date, Double> history;
+    private Map<Date, Double> history = new HashMap<>();
+    
+    private Double minPrice;
+
+    private Double maxPrice;
+
+    private String name;
 }

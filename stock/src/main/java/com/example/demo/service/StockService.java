@@ -9,6 +9,7 @@ import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.models.History;
 import com.example.demo.models.HistoryDTO;
 import com.example.demo.models.Stock;
 import com.example.demo.repository.HistoryRepository;
@@ -27,7 +28,25 @@ public class StockService {
 
     public Stock addStock(Stock stock) {
         stock.setCurrentPrice(generateRandomPrice(stock.getMinPrice(), stock.getMaxPrice(), stock.getCurrentPrice()));
-        return stockRepository.save(stock);
+
+        System.out.println("**************************ADDING STOCK******************************");
+        Stock newStock =  stockRepository.save(stock);
+        try{
+            //Initializing a new history for this stock
+            History newStockHistory = new History();
+            newStockHistory.setName(newStock.getName());
+            newStockHistory.setStockId(newStock.getId());
+            newStockHistory.setMinPrice(newStock.getMinPrice());
+            newStockHistory.setMaxPrice(newStock.getMaxPrice());
+
+            historyRepository.addHistory(newStockHistory);
+            System.out.println("**************************STOCK HISTORY INITIALIZED ******************************");
+
+        }catch(Exception e){
+            System.out.println("Some Error occured. Unable to Initialize histor");
+            e.printStackTrace();
+        }
+        return newStock;
     }
 
     public List<Stock> getAllStocks() {

@@ -29,6 +29,12 @@ public class HistoryController {
     @Autowired
     private HistoryService service;
 
+    @PostMapping("/add")
+    public ResponseEntity<String> initializeHistory(@RequestBody History body ) {
+        return (service.initializeHistory(body) instanceof History)? ResponseEntity.ok("History initialized successfully") : ResponseEntity.badRequest().body("Failed to initialize history");
+    }
+    
+
     @PostMapping
     public ResponseEntity<String> writeHistory(@RequestBody HistoryDTO body) {
         History updatedHistory = service.saveHistory(body);
@@ -45,9 +51,11 @@ public class HistoryController {
     }
 
     @GetMapping("/{stock_id}")
-    public Optional<History> getHistoryByStockId(@PathVariable Integer stock_id) {
-        List<History> history = service.getHistory(Long.valueOf(stock_id));
+    public Optional<History> getHistoryByStockId(@PathVariable Long stock_id) {
+        List<History> history = service.getHistory(stock_id);
         return history.isEmpty() ? Optional.empty() : Optional.of(history.get(0));
     }
+
+
     
 }

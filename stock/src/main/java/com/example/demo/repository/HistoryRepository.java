@@ -21,4 +21,7 @@ public interface HistoryRepository {
 
     @RequestMapping(value="", method=RequestMethod.POST, consumes="application/json")
     public String saveHistory(@RequestBody  HistoryDTO historydto);
+
+    @RequestMapping(value="/add", method=RequestMethod.POST, consumes="application/json")
+    public String addHistory(@RequestBody  History body);
 }

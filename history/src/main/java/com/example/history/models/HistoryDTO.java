@@ -12,6 +12,7 @@ public class HistoryDTO {
     private Long stockId;
     private Date date;
     private Double price;
+    
 
     public History toHistory(History prevHistory) {
         Map<Date, Double> history = prevHistory.getHistory();

@@ -1,5 +1,7 @@
 import java.io.File;
 import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.concurrent.TimeUnit;
 
 public class ServiceStarter {
@@ -21,12 +23,47 @@ public class ServiceStarter {
         };
 
         for (String service : services) {
+            if (hasChangesInServiceDirectory(baseDir, service)) {
+                System.out.println("Changes detected in " + service + " directory. Building...");
+                createJarFile(baseDir, service);
+            }
             startService(baseDir, service);
             System.out.println("Waiting " + DELAY_BETWEEN_SERVICES + " seconds before starting next service...");
             sleep(DELAY_BETWEEN_SERVICES);
         }
 
         System.out.println("All services have been started!");
+    }
+
+    private static boolean hasChangesInServiceDirectory(String baseDir, String serviceName) {
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder(
+                "git",
+                "status",
+                "--porcelain",
+                serviceName + "/"
+            );
+            processBuilder.directory(new File(baseDir));
+            Process process = processBuilder.start();
+            
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            boolean hasChanges = false;
+            
+            while ((line = reader.readLine()) != null) {
+                if (!line.trim().isEmpty()) {
+                    hasChanges = true;
+                    break;
+                }
+            }
+            
+            process.waitFor();
+            return hasChanges;
+            
+        } catch (IOException | InterruptedException e) {
+            System.err.println("Error checking git status for " + serviceName + ": " + e.getMessage());
+            return false;
+        }
     }
 
     private static void startService(String baseDir, String serviceName) {
@@ -50,21 +87,12 @@ public class ServiceStarter {
                 jarPath
             );
 
-            // Set working directory to the service's folder
             processBuilder.directory(new File(baseDir + File.separator + serviceName));
-            
-            // Redirect error and output streams
             processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT);
             processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
 
             System.out.println("Starting " + serviceName + " service...");
             Process process = processBuilder.start();
-
-            // Add shutdown hook to terminate the process when the main program exits
-            // Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            //     process.destroy();
-            //     System.out.println("Terminated " + serviceName + " service");
-            // }));
 
         } catch (IOException e) {
             System.err.println("Error starting " + serviceName + " service: " + e.getMessage());
@@ -108,8 +136,6 @@ public class ServiceStarter {
             );
 
             processBuilder.directory(new File(baseDir + File.separator + serviceName));
-            
-            // Redirect error and output streams            
             processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT);  
             processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
             
@@ -130,3 +156,4 @@ public class ServiceStarter {
         }
     }
 }
+
